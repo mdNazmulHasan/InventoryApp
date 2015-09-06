@@ -16,6 +16,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:background="#03A9F4"
+        android:onClick="newOrder"
         android:text="New Order"
         android:textColor="#ffffff" />
 

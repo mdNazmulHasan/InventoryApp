@@ -1,10 +1,12 @@
 package com.nerdcastle.mdnazmulhasan.inventoryapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -24,6 +26,7 @@ public class DashboardActivity extends AppCompatActivity {
     ListView listView;
     int dataUpto;
     boolean more=false;
+    TextView listHeader;
 
 
     @Override
@@ -32,6 +35,7 @@ public class DashboardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dashboard);
         //View header = getLayoutInflater().inflate(R.layout.header, null);
          listView = (ListView) findViewById(R.id.listView);
+        listHeader= (TextView) findViewById(R.id.listHeader);
         //listView.addHeaderView(header);
         dataRequest();
 
@@ -55,7 +59,7 @@ public class DashboardActivity extends AppCompatActivity {
                     for(int i=0;i<dataUpto;i++){
                         JSONObject singleData= response.getJSONObject(i);
                         String orderNo=singleData.getString("OrderNo");
-                        String date=singleData.getString("Date");
+                        String date=singleData.getString("OrderDate");
                         String status=singleData.getString("Status");
                         String singleOrder=orderNo+"      "+date+"      "+status;
                         orderList.add(singleOrder);
@@ -82,7 +86,13 @@ public class DashboardActivity extends AppCompatActivity {
     }
     public void moreData(View view){
         more=true;
+        listHeader.setText("All Order");
         dataRequest();
+
+    }
+    public void newOrder(View view){
+        Intent intent=new Intent(getApplicationContext(),NewOrderActivity.class);
+        startActivity(intent);
 
     }
 
