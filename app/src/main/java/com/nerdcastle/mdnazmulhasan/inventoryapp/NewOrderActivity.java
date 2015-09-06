@@ -4,12 +4,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -21,8 +17,6 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 public class NewOrderActivity extends AppCompatActivity {
     LinearLayout linear;
@@ -39,19 +33,11 @@ public class NewOrderActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONArray response) {
                 int totalBrand=response.length();
-                Button[] btn = new Button[totalBrand];
+
                 for(int i=0;i<totalBrand;i++){
-                    btn[i] = new Button(getApplicationContext());
+
                     try {
-                        btn[i].setText(response.getJSONObject(i).getString("BrandName"));
-                        btn[i].setTextColor(Color.parseColor("#000000"));
-                        btn[i].setTextSize(20);
-                        btn[i].setHeight(100);
-                        btn[i].setTag(response.getJSONObject(i));
-                        btn[i].setLayoutParams(param);
-                        btn[i].setPadding(15, 5, 15, 5);
-                        linear.addView(btn[i]);
-                        btn[i].setOnClickListener(handleOnClick(btn[i]));
+                        createDynamicButton(response, totalBrand, i, param);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -68,10 +54,34 @@ public class NewOrderActivity extends AppCompatActivity {
         request.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         AppController.getInstance().addToRequestQueue(request);
     }
+
+    private void createDynamicButton(JSONArray response, int totalBrand, int i, LinearLayout.LayoutParams param) throws JSONException {
+        Button[] btn = new Button[totalBrand];
+        btn[i] = new Button(getApplicationContext());
+        btn[i].setText(response.getJSONObject(i).getString("BrandName"));
+        btn[i].setTextColor(Color.parseColor("#000000"));
+        btn[i].setTextSize(20);
+        btn[i].setHeight(100);
+        btn[i].setTag(response.getJSONObject(i));
+        btn[i].setLayoutParams(param);
+        btn[i].setPadding(15, 5, 15, 5);
+        linear.addView(btn[i]);
+        btn[i].setOnClickListener(handleOnClick(btn[i]));
+    }
+
     View.OnClickListener handleOnClick(final Button button) {
         return new View.OnClickListener() {
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(),button.getTag().toString(), Toast.LENGTH_LONG).show();
+                JSONObject butttonData= (JSONObject) button.getTag();
+                try {
+                    String id=butttonData.getString("BrandId");
+                    Toast.makeText(getApplicationContext(),"brandId"+id, Toast.LENGTH_LONG).show();
+                    int brandId=Integer.parseInt(id);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         };
     }
