@@ -1,5 +1,6 @@
 package com.nerdcastle.mdnazmulhasan.inventoryapp;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -77,7 +78,12 @@ public class NewOrderActivity extends AppCompatActivity {
                 try {
                     String id=butttonData.getString("BrandId");
                     Toast.makeText(getApplicationContext(),"brandId"+id, Toast.LENGTH_LONG).show();
-                    int brandId=Integer.parseInt(id);
+                    //int brandId=Integer.parseInt(id);
+                    String brandName=butttonData.getString("BrandName");
+                    Intent intent=new Intent(getApplicationContext(),InputOrderActivity.class);
+                    intent.putExtra("brandName",brandName);
+                    intent.putExtra("id",id);
+                    startActivity(intent);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
