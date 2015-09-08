@@ -1,4 +1,6 @@
 package com.nerdcastle.mdnazmulhasan.inventoryapp;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -51,14 +53,19 @@ public class LoginActivity extends AppCompatActivity {
             public void onResponse(JSONObject jsonObject) {
                 try {
                     Boolean result=jsonObject.getBoolean("ResultState");
-                    String userId=jsonObject.getString("Id");
+                    String userId=jsonObject.getString("UserId");
+                    String token=jsonObject.getString("Token");
+                    SharedPreferences.Editor editor = getApplicationContext().getSharedPreferences("myPref", MODE_PRIVATE).edit();
+                    editor.putString("Token",token);
+                    editor.commit();
                     System.out.println(userId);
-                    Toast.makeText(getApplicationContext(),userId, Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(),jsonObject.toString(), Toast.LENGTH_LONG).show();
                     if(result){
-                        Toast.makeText(getApplicationContext(),result.toString(), Toast.LENGTH_LONG).show();
-                        /*Intent i=new Intent(getApplicationContext(),HomeActivity.class);
-                        i.putExtra("id",userId);
-                        startActivity(i);*/
+                      //  Toast.makeText(getApplicationContext(),result.toString(), Toast.LENGTH_LONG).show();
+                        Intent i=new Intent(getApplicationContext(),DashboardActivity.class);
+                        i.putExtra("UserId",userId);
+                        i.putExtra("Token",token);
+                        startActivity(i);
                     }
                     else if(!result){
                         Toast.makeText(getApplicationContext(),"Incorrect Username or Password", Toast.LENGTH_LONG).show();

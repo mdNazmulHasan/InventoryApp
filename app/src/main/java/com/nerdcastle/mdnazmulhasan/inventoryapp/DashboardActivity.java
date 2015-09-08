@@ -1,6 +1,7 @@
 package com.nerdcastle.mdnazmulhasan.inventoryapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -27,12 +28,33 @@ public class DashboardActivity extends AppCompatActivity {
     int dataUpto;
     boolean more=false;
     TextView listHeader;
+    String token;
+    String tokenData;
+    /*JSONObject dataForValidation=new JSONObject();
+    JSONArray validationObject=new JSONArray();*/
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("myPref", MODE_PRIVATE);
+        String tokenData = prefs.getString("Token", "");
+        /*if (restoredText != null) {
+            tokenData = prefs.getString("Token", "No token");//"No name defined" is the default value.
+             //0 is the default value.
+        }*/
+//        String userId=getIntent().getStringExtra("UserId");
+        token="token="+tokenData;
+
+        /*try {
+            dataForValidation.put("UserId",userId);
+            dataForValidation.put("Token",token);
+            validationObject.put(dataForValidation);
+            System.out.println(validationObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }*/
         //View header = getLayoutInflater().inflate(R.layout.header, null);
          listView = (ListView) findViewById(R.id.listView);
         listHeader= (TextView) findViewById(R.id.listHeader);
@@ -40,11 +62,10 @@ public class DashboardActivity extends AppCompatActivity {
         dataRequest();
 
     }
-
     public void dataRequest() {
 
 
-        String url="http://dotnet.nerdcastlebd.com/Bazar/api/orders";
+        String url="http://dotnet.nerdcastlebd.com/Bazar/api/orders?"+token;
         JsonArrayRequest request=new JsonArrayRequest(Request.Method.GET, url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {

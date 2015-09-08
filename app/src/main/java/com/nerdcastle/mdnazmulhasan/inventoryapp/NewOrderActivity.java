@@ -7,17 +7,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import static android.graphics.Color.BLUE;
 
 public class NewOrderActivity extends AppCompatActivity {
     LinearLayout linear;
@@ -43,13 +47,32 @@ public class NewOrderActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
-                Toast.makeText(getApplicationContext(), String.valueOf(totalBrand), Toast.LENGTH_LONG).show();
-                Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), String.valueOf(totalBrand), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
+                if(error instanceof TimeoutError) {
+                    LinearLayout ll = (LinearLayout) findViewById(R.id.brand);
+                    TextView status = new TextView(getApplicationContext());
+                    status.setTextSize(20.0f);
+                    status.setText("Request Timed Out,Pls press the reload button");
+                    status.setTextColor(BLUE);
+                    Button reload_btn = new Button(getApplicationContext());
+                    reload_btn.setText("Reload");
+                    ll.addView(status);
+                    ll.addView(reload_btn);
+                    reload_btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent=new Intent(getApplicationContext(),NewOrderActivity.class);
+                            startActivity(intent);
+
+                        }
+                    });
+                }
             }
         });
         request.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
@@ -73,7 +96,7 @@ public class NewOrderActivity extends AppCompatActivity {
     View.OnClickListener handleOnClick(final Button button) {
         return new View.OnClickListener() {
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),button.getTag().toString(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(),button.getTag().toString(), Toast.LENGTH_LONG).show();
                 JSONObject butttonData= (JSONObject) button.getTag();
                 try {
                     String id=butttonData.getString("BrandId");

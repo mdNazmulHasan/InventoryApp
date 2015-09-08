@@ -3,6 +3,7 @@ package com.nerdcastle.mdnazmulhasan.inventoryapp;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.Gravity;
@@ -32,7 +33,7 @@ import static android.graphics.Color.CYAN;
 
 public class InputOrderActivity extends Activity {
     int i = 0;
-    List<EditText> allEds = new ArrayList<EditText>();
+    List<EditText> allEds = new ArrayList<>();
     List<String> allEdsData = new ArrayList<>();
     String brand;
     String id;
@@ -43,8 +44,9 @@ public class InputOrderActivity extends Activity {
     JSONObject productData;
     String productId;
     String brandId;
-    JSONObject submittedData=new JSONObject();
+    JSONObject submittedData;
     JSONArray totalData;
+    String tokenData;
 
 
     @Override
@@ -53,6 +55,8 @@ public class InputOrderActivity extends Activity {
         setContentView(R.layout.input_order);
         brand=getIntent().getStringExtra("brandName");
         id=getIntent().getStringExtra("id");
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("myPref", MODE_PRIVATE);
+        tokenData = prefs.getString("Token", "");
         createOrderWindow();
 
     }
@@ -98,6 +102,8 @@ public class InputOrderActivity extends Activity {
                 et.setId(i);
                 et.setInputType(InputType.TYPE_CLASS_NUMBER);
                 et.setTag(response.getJSONObject(i));
+                System.out.println(response.getJSONObject(i));
+
                 et.setBackgroundResource(R.drawable.rounded_edittext);
                 ll.addView(et);
             } catch (JSONException e) {
@@ -120,15 +126,18 @@ public class InputOrderActivity extends Activity {
         String url="http://dotnet.nerdcastlebd.com/Bazar/api/orders";
 
         for(int i=0; i < allEds.size(); i++){
+            submittedData=new JSONObject();
             quantity= allEds.get(i).getText().toString();
             try {
                 if(quantity.length()!=0){
-                    productData= (JSONObject) et.getTag();
+                    productData= (JSONObject) allEds.get(i).getTag();
+                    System.out.println(productData);
                     productId=productData.getString("ProductId");
                     brandId=productData.getString("BrandId");
                     submittedData.put("SubmittedQuantity",quantity);
                     submittedData.put("ProductId",productId);
                     submittedData.put("BrandId",brandId);
+                    submittedData.put("Token",tokenData);
                     totalData.put(submittedData);
                 }
                 Toast.makeText(getApplicationContext(), totalData.toString(), Toast.LENGTH_LONG).show();
