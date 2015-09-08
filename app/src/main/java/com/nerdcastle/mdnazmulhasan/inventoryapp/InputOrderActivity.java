@@ -1,6 +1,8 @@
 package com.nerdcastle.mdnazmulhasan.inventoryapp;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.Gravity;
@@ -108,7 +110,7 @@ public class InputOrderActivity extends Activity {
         submit_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                orderSubmit();
+                confirmSubmission();
             }
         });
     }
@@ -151,4 +153,24 @@ public class InputOrderActivity extends Activity {
         jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         AppController.getInstance().addToRequestQueue(jsonArrayRequest);
     }
+    private void confirmSubmission() {
+        AlertDialog alertDialog = new AlertDialog.Builder(InputOrderActivity.this).create();
+        alertDialog.setTitle("Confirm");
+        alertDialog.setMessage("Are you sure?");
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        orderSubmit();
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
+    }
+
 }
