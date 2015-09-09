@@ -3,6 +3,7 @@ package com.nerdcastle.mdnazmulhasan.inventoryapp;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
@@ -29,15 +30,13 @@ import java.util.List;
 
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.BLUE;
-import static android.graphics.Color.CYAN;
 
 public class InputOrderActivity extends Activity {
-    int i = 0;
     List<EditText> allEds = new ArrayList<>();
-    List<String> allEdsData = new ArrayList<>();
     String brand;
     String id;
     String url;
+    String url2;
     String data;
     String quantity;
     EditText et;
@@ -53,8 +52,8 @@ public class InputOrderActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.input_order);
-        brand=getIntent().getStringExtra("brandName");
-        id=getIntent().getStringExtra("id");
+        brand = getIntent().getStringExtra("brandName");
+        id = getIntent().getStringExtra("id");
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("myPref", MODE_PRIVATE);
         tokenData = prefs.getString("Token", "");
         createOrderWindow();
@@ -62,8 +61,8 @@ public class InputOrderActivity extends Activity {
     }
 
     private void createOrderWindow() {
-        data="brandId="+id;
-        url = "http://dotnet.nerdcastlebd.com/Bazar/api/products?"+data;
+        data = "brandId=" + id;
+        url = "http://dotnet.nerdcastlebd.com/Bazar/api/products?" + data;
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -122,25 +121,24 @@ public class InputOrderActivity extends Activity {
     }
 
     private void orderSubmit() {
-        totalData=new JSONArray();
-        String url="http://dotnet.nerdcastlebd.com/Bazar/api/orders";
+        totalData = new JSONArray();
+        url2 = "http://dotnet.nerdcastlebd.com/Bazar/api/orders";
 
-        for(int i=0; i < allEds.size(); i++){
-            submittedData=new JSONObject();
-            quantity= allEds.get(i).getText().toString();
+        for (int i = 0; i < allEds.size(); i++) {
+            submittedData = new JSONObject();
+            quantity = allEds.get(i).getText().toString();
             try {
-                if(quantity.length()!=0){
-                    productData= (JSONObject) allEds.get(i).getTag();
+                if (quantity.length() != 0) {
+                    productData = (JSONObject) allEds.get(i).getTag();
                     System.out.println(productData);
-                    productId=productData.getString("ProductId");
-                    brandId=productData.getString("BrandId");
-                    submittedData.put("SubmittedQuantity",quantity);
-                    submittedData.put("ProductId",productId);
-                    submittedData.put("BrandId",brandId);
-                    submittedData.put("Token",tokenData);
+                    productId = productData.getString("ProductId");
+                    brandId = productData.getString("BrandId");
+                    submittedData.put("SubmittedQuantity", quantity);
+                    submittedData.put("ProductId", productId);
+                    submittedData.put("BrandId", brandId);
+                    submittedData.put("Token", tokenData);
                     totalData.put(submittedData);
                 }
-                Toast.makeText(getApplicationContext(), totalData.toString(), Toast.LENGTH_LONG).show();
 
 
             } catch (JSONException e) {
@@ -148,10 +146,12 @@ public class InputOrderActivity extends Activity {
             }
 
         }
-        JsonArrayRequest jsonArrayRequest=new JsonArrayRequest(Request.Method.POST, url, totalData, new Response.Listener<JSONArray>() {
+        Toast.makeText(getApplicationContext(), totalData.toString(), Toast.LENGTH_LONG).show();
+        System.out.println(totalData);
+        JsonArrayRequest orderSubmitRequest=new JsonArrayRequest(Request.Method.POST, url2, totalData, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-
+                Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -159,9 +159,13 @@ public class InputOrderActivity extends Activity {
                 Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
             }
         });
-        jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        AppController.getInstance().addToRequestQueue(jsonArrayRequest);
+        orderSubmitRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        AppController.getInstance().addToRequestQueue(orderSubmitRequest);
+        Intent intent=new Intent(getApplicationContext(),DashboardActivity.class);
+        startActivity(intent);
+
     }
+
     private void confirmSubmission() {
         AlertDialog alertDialog = new AlertDialog.Builder(InputOrderActivity.this).create();
         alertDialog.setTitle("Confirm");
