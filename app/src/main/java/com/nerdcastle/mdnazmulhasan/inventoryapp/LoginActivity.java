@@ -11,6 +11,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
@@ -81,6 +82,10 @@ public class LoginActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError volleyError) {
                 if(volleyError instanceof NoConnectionError) {
                     String msg = "No internet Access, Check your internet connection.";
+                    Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
+                }
+                if(volleyError instanceof TimeoutError) {
+                    String msg = "Request Timed Out, Pls try again";
                     Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
                 }
             }

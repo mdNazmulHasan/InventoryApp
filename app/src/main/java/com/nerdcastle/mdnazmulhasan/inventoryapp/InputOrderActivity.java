@@ -67,7 +67,19 @@ public class InputOrderActivity extends Activity {
             @Override
             public void onResponse(JSONArray response) {
                 Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
-                createDynamicForm(response);
+                if(response.length()!=0){
+                    createDynamicForm(response);
+                }
+                else{
+                    LinearLayout ll = (LinearLayout) findViewById(R.id.mainlayout);
+                    TextView status = new TextView(getApplicationContext());
+                    status.setTextSize(20.0f);
+                    status.setText("No data to display");
+                    status.setTextColor(BLUE);
+                    ll.addView(status);
+
+                }
+
             }
 
 
