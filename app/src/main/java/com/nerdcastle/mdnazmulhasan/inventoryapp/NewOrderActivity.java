@@ -100,7 +100,7 @@ public class NewOrderActivity extends AppCompatActivity {
                 JSONObject butttonData= (JSONObject) button.getTag();
                 try {
                     String id=butttonData.getString("BrandId");
-                    Toast.makeText(getApplicationContext(),"brandId"+id, Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(),"brandId"+id, Toast.LENGTH_LONG).show();
                     //int brandId=Integer.parseInt(id);
                     String brandName=butttonData.getString("BrandName");
                     Intent intent=new Intent(getApplicationContext(),InputOrderActivity.class);

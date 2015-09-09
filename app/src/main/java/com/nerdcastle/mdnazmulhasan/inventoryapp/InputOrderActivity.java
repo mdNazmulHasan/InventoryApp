@@ -27,6 +27,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.BLUE;
@@ -46,6 +47,7 @@ public class InputOrderActivity extends Activity {
     JSONObject submittedData;
     JSONArray totalData;
     String tokenData;
+    String reply;
 
 
     @Override
@@ -66,7 +68,7 @@ public class InputOrderActivity extends Activity {
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-                Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
                 if(response.length()!=0){
                     createDynamicForm(response);
                 }
@@ -86,7 +88,7 @@ public class InputOrderActivity extends Activity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
             }
         });
         request.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
@@ -158,17 +160,22 @@ public class InputOrderActivity extends Activity {
             }
 
         }
-        Toast.makeText(getApplicationContext(), totalData.toString(), Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), totalData.toString(), Toast.LENGTH_LONG).show();
         System.out.println(totalData);
         JsonArrayRequest orderSubmitRequest=new JsonArrayRequest(Request.Method.POST, url2, totalData, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-                Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
+                try {
+                    reply=response.getJSONObject(0).getString("Message");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Toast.makeText(getApplicationContext(), reply, Toast.LENGTH_LONG).show();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
             }
         });
         orderSubmitRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
