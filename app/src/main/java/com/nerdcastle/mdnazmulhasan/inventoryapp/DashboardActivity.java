@@ -70,14 +70,14 @@ public class DashboardActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONArray response) {
                 if(more){
-                    dataUpto=response.length();
+                    dataUpto=0;
                 }
                 else{
-                    dataUpto=5;
+                    dataUpto=response.length()-5;
                 }
 
                 try {
-                    for(int i=0;i<dataUpto;i++){
+                    for(int i=response.length()-1;i>dataUpto;i--){
                         JSONObject singleData= response.getJSONObject(i);
                         String orderNo=singleData.getString("OrderNo");
                         String date=singleData.getString("OrderDate");
